@@ -548,7 +548,8 @@ private:
 
 	void _request_screenshot();
 	void _screenshot(bool p_use_utc = false);
-	void _save_screenshot(NodePath p_path);
+	void _save_screenshot(const String &p_path);
+	void _save_screenshot_with_embedded_process(int64_t p_w, int64_t p_h, const String &p_emb_path, const Rect2i &p_rect, const String &p_path);
 
 	void _check_system_theme_changed();
 
@@ -587,7 +588,7 @@ private:
 	void _set_current_scene(int p_idx);
 	void _set_current_scene_nocheck(int p_idx);
 	bool _validate_scene_recursive(const String &p_filename, Node *p_node);
-	void _save_scene(String p_file, int idx = -1);
+	void _save_scene(String p_file, int idx = -1, bool show_progress = true);
 	void _save_all_scenes();
 	int _next_unsaved_scene(bool p_valid_filename, int p_start = 0);
 	void _discard_changes(const String &p_str = String());
@@ -640,7 +641,6 @@ private:
 	bool _is_scene_unsaved(int p_idx);
 
 	void _find_node_types(Node *p_node, int &count_2d, int &count_3d);
-	void _save_scene_with_preview(String p_file, int p_idx = -1);
 	void _close_save_scene_progress();
 
 	bool _find_scene_in_use(Node *p_node, const String &p_path) const;
@@ -937,11 +937,8 @@ public:
 	Control *get_gui_base() { return gui_base; }
 
 	void save_scene_to_path(String p_file, bool p_with_preview = true) {
-		if (p_with_preview) {
-			_save_scene_with_preview(p_file);
-		} else {
-			_save_scene(p_file);
-		}
+		// p_with_preview has no effect, now generates preview at EditorPackedScenePreviewPlugin
+		_save_scene(p_file);
 	}
 
 	bool close_scene();
